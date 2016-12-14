@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(name='s3_wrapper',
-        version='0.0.1',
+        version='1.0.0-beta.1',
         description='boto wrapper',
         author='Pontus Enmark',
         author_email='pontus@wka.se',
