@@ -1,7 +1,7 @@
 from distutils.core import setup
 
 setup(name='s3_wrapper',
-        version='1.0.0',
+        version='1.0.1',
         description='s3 boto wrapper',
         author='Pontus Enmark',
         author_email='pontus@wka.se',
@@ -9,7 +9,7 @@ setup(name='s3_wrapper',
         packages=['s3_wrapper'],
         install_requires=[
             'boto==2.44.0',
-            'python-dotenv==0.6.1'
+            'python-dotenv==0.6.2'
             ],
         entry_points='''
         [console_scripts]
