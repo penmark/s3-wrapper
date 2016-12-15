@@ -1,8 +1,8 @@
 from distutils.core import setup
 
 setup(name='s3_wrapper',
-        version='1.0.0-beta.1',
-        description='boto wrapper',
+        version='1.0.0',
+        description='s3 boto wrapper',
         author='Pontus Enmark',
         author_email='pontus@wka.se',
         url='https://github.com/penmark/s3-wrapper',

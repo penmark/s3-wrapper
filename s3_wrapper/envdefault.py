@@ -15,3 +15,8 @@ class EnvDefault(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         setattr(namespace, self.dest, values)
 
+
+def truthy(val):
+    if not val:
+        return False
+    return val in ('true', '1', 't')

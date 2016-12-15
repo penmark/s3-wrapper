@@ -1,4 +1,5 @@
 import boto
+from boto.s3.connection import NoHostProvided
 
 
 def percent_callback(num_bytes, total_bytes):
@@ -7,7 +8,10 @@ def percent_callback(num_bytes, total_bytes):
 
 class S3(object):
     def __init__(self, options):
-        self.options = options
+        if not options.host:
+            options.host = NoHostProvided
+        if not options.calling_format:
+            options.calling_format = 'boto.s3.connection.SubdomainCallingFormat'
         self.conn = boto.connect_s3(
             aws_access_key_id=options.access_key,
             aws_secret_access_key=options.secret_key,

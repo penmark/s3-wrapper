@@ -1,10 +1,9 @@
 import argparse
 import json
 from dotenv import load_dotenv, find_dotenv
-from s3_wrapper.envdefault import EnvDefault
+from s3_wrapper.envdefault import EnvDefault, truthy
 from s3_wrapper import S3
 from urllib.parse import unquote_plus
-from boto.s3.connection import NoHostProvided
 
 
 def handle_list(s3, args):
@@ -41,12 +40,6 @@ def handle_shell(s3, args):
     embed()
 
 
-def truthy(val):
-    if not val:
-        return False
-    return val in ('true', '1', 't')
-
-
 def main():
     load_dotenv(find_dotenv())
 
@@ -55,9 +48,8 @@ def main():
     parser.add_argument('-s', '--secret-key', action=EnvDefault, envvar='S3_SECRET_KEY')
     parser.add_argument('-a', '--access-key', action=EnvDefault, envvar='S3_ACCESS_KEY')
     parser.add_argument('--is-secure', action=EnvDefault, type=truthy, required=False, envvar='S3_SSL')
-    parser.add_argument('-H', '--host', action=EnvDefault, required=False, default=NoHostProvided, envvar='S3_HOST')
-    parser.add_argument('-o', '--calling-format', action=EnvDefault, required=False,
-                        default='boto.s3.connection.SubdomainCallingFormat', envvar='S3_CALLING_FORMAT')
+    parser.add_argument('-H', '--host', action=EnvDefault, required=False, envvar='S3_HOST')
+    parser.add_argument('-c', '--calling-format', action=EnvDefault, required=False, envvar='S3_CALLING_FORMAT')
 
     subparsers = parser.add_subparsers(dest='subparser_name')
     
@@ -96,7 +88,6 @@ def main():
     shell_parser.set_defaults(handle=handle_shell)
 
     args = parser.parse_args()
-    print(args)
     s3 = S3(args)
     args.handle(s3, args)
 
