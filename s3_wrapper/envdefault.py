@@ -4,9 +4,9 @@ import os
 
 class EnvDefault(argparse.Action):
     def __init__(self, envvar, required=True, default=None, **kwargs):
-        if not default and envvar:
-            if envvar in os.environ:
-                default = os.environ[envvar]
+        env_value = os.environ.get(envvar)
+        if env_value:
+            default = env_value
         if required and default:
             required = False
         super(EnvDefault, self).__init__(default=default, required=required,

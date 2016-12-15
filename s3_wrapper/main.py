@@ -1,9 +1,11 @@
 import argparse
 import json
 from dotenv import load_dotenv, find_dotenv
-from s3.envdefault import EnvDefault
-from s3 import S3
+from s3_wrapper.envdefault import EnvDefault
+from s3_wrapper import S3
 from urllib.parse import unquote_plus
+from boto.s3.connection import NoHostProvided
+
 
 def handle_list(s3, args):
     for url in s3.list_bucket(args.bucket, keys=args.keys):
@@ -39,6 +41,12 @@ def handle_shell(s3, args):
     embed()
 
 
+def truthy(val):
+    if not val:
+        return False
+    return val in ('true', '1', 't')
+
+
 def main():
     load_dotenv(find_dotenv())
 
@@ -46,8 +54,11 @@ def main():
     parser.add_argument('-b', '--bucket', action=EnvDefault, envvar='S3_BUCKET')
     parser.add_argument('-s', '--secret-key', action=EnvDefault, envvar='S3_SECRET_KEY')
     parser.add_argument('-a', '--access-key', action=EnvDefault, envvar='S3_ACCESS_KEY')
-    parser.add_argument('--is-secure', action=EnvDefault, required=False, default=False, envvar='S3_HOST_SSL')
-    parser.add_argument('-H', '--host', action=EnvDefault, envvar='S3_HOST')
+    parser.add_argument('--is-secure', action=EnvDefault, type=truthy, required=False, envvar='S3_SSL')
+    parser.add_argument('-H', '--host', action=EnvDefault, required=False, default=NoHostProvided, envvar='S3_HOST')
+    parser.add_argument('-o', '--calling-format', action=EnvDefault, required=False,
+                        default='boto.s3.connection.SubdomainCallingFormat', envvar='S3_CALLING_FORMAT')
+
     subparsers = parser.add_subparsers(dest='subparser_name')
     
     list_parser = subparsers.add_parser('list')
@@ -56,10 +67,10 @@ def main():
     list_parser.set_defaults(handle=handle_list)
 
     put_filename_parser = subparsers.add_parser('put')
+    put_filename_parser.add_argument('bucket')
     put_filename_parser.add_argument('filename')
     put_filename_parser.add_argument('key')
-    put_filename_parser.add_argument('bucket', default=None)
-    put_filename_parser.add_argument('metadata', default=None, type=json.loads)
+    put_filename_parser.add_argument('-m', '--metadata', default=None, required=False, type=json.loads)
     put_filename_parser.set_defaults(handle=handle_put_filename)
 
     copy_parser = subparsers.add_parser('copy')
@@ -77,7 +88,7 @@ def main():
     move_parser.set_defaults(handle=handle_move)
 
     delete_parser = subparsers.add_parser('delete')
-    delete_parser.add_argument('bucket', default=None)
+    delete_parser.add_argument('bucket')
     delete_parser.add_argument('key')
     delete_parser.set_defaults(handle=handle_delete)
 
@@ -85,7 +96,7 @@ def main():
     shell_parser.set_defaults(handle=handle_shell)
 
     args = parser.parse_args()
-
+    print(args)
     s3 = S3(args)
     args.handle(s3, args)
 

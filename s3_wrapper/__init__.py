@@ -1,7 +1,4 @@
-import os
-
 import boto
-from boto.s3.connection import OrdinaryCallingFormat
 
 
 def percent_callback(num_bytes, total_bytes):
@@ -16,7 +13,8 @@ class S3(object):
             aws_secret_access_key=options.secret_key,
             host=options.host,
             is_secure=options.is_secure,
-            calling_format=OrdinaryCallingFormat())
+            calling_format=options.calling_format,
+            debug=1)
         self.bucket = self.ensure_bucket(options.bucket)
         self.default_policy = getattr(options, 'default_policy', 'public-read')
 
