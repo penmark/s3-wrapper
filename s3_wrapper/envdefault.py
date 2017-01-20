@@ -19,4 +19,4 @@ class EnvDefault(argparse.Action):
 def truthy(val):
     if not val:
         return False
-    return val in ('true', '1', 't')
+    return val.lower() in ('true', '1', 't')

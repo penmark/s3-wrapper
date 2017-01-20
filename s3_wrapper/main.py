@@ -47,7 +47,7 @@ def main():
     parser.add_argument('-b', '--bucket', action=EnvDefault, envvar='S3_BUCKET')
     parser.add_argument('-s', '--secret-key', action=EnvDefault, envvar='S3_SECRET_KEY')
     parser.add_argument('-a', '--access-key', action=EnvDefault, envvar='S3_ACCESS_KEY')
-    parser.add_argument('--is-secure', action=EnvDefault, type=truthy, required=False, envvar='S3_SSL')
+    parser.add_argument('--is-secure', action=EnvDefault, type=truthy, default=True, required=False, envvar='S3_SSL')
     parser.add_argument('-H', '--host', action=EnvDefault, required=False, envvar='S3_HOST')
     parser.add_argument('-c', '--calling-format', action=EnvDefault, required=False, envvar='S3_CALLING_FORMAT')
 
