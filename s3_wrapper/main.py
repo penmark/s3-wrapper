@@ -41,7 +41,7 @@ def handle_shell(s3, args):
 
 
 def main():
-    load_dotenv(find_dotenv())
+    load_dotenv(find_dotenv(usecwd=True))
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-b', '--bucket', action=EnvDefault, envvar='S3_BUCKET')
@@ -50,6 +50,7 @@ def main():
     parser.add_argument('--is-secure', action=EnvDefault, type=truthy, default=True, required=False, envvar='S3_SSL')
     parser.add_argument('-H', '--host', action=EnvDefault, required=False, envvar='S3_HOST')
     parser.add_argument('-c', '--calling-format', action=EnvDefault, required=False, envvar='S3_CALLING_FORMAT')
+    parser.add_argument('-v', '--verbose', action='store_true', default=False)
 
     subparsers = parser.add_subparsers(dest='subparser_name')
     
@@ -88,6 +89,9 @@ def main():
     shell_parser.set_defaults(handle=handle_shell)
 
     args = parser.parse_args()
+    if args.verbose:
+        print(', '.join(['{}={}'.format(arg, getattr(args, arg))
+              for arg in 'access_key secret_key bucket host is_secure calling_format'.split()]))
     s3 = S3(args)
     args.handle(s3, args)
 
